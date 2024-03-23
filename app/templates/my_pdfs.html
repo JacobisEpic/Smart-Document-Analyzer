@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My PDFs</title>
+</head>
+<body>
+    <h2>My Uploaded PDFs</h2>
+    <ul>
+        {% for pdf in pdfs %}
+            <li><a href="{{ url_for('get_pdf', pdf_id=pdf.pdf_id) }}">{{ pdf.filename }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload PDF</title>
+</head>
+<body>
+    <h2>Upload PDF</h2>
+    <!-- No username input field required -->
+    <form action="/upload_pdf" method="post" enctype="multipart/form-data">
+        <label for="file">Select PDF to upload:</label>
+        <input type="file" id="file" name="file" accept="application/pdf" required><br><br>
+        <input type="submit" value="Upload PDF">
+    </form>
+
+    <!-- Placeholder for the upload confirmation message -->
+    <div id="uploadMessage"></div>
+    <a href="/my_pdfs">View My PDFs</a>
+
+    <script>
+        document.querySelector("form").onsubmit = async function(event) {
+            event.preventDefault(); // Prevent the form from submitting via the browser's default action
+            
+            const formData = new FormData(event.target); // Create a FormData object from the form
+            const response = await fetch('/upload_pdf', { // Send the form data to the server via fetch
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json(); // Parse the JSON response
+            document.getElementById("uploadMessage").innerText = result.message; // Display the message in the div
+        };
+    </script>
+</body>
+</html>
