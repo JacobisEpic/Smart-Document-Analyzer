@@ -61,9 +61,9 @@ class Database:
             user['pdfs'] = [pdf_entry]
         else:
             user['pdfs'].append(pdf_entry)
-        
+        pdf_id = self.fs.put(pdf_data, filename=filename)
         self.users.update_one({'_id': user['_id']}, {'$set': {'pdfs': user['pdfs']}})
-        return True, "PDF stored in GridFS successfully."
+        return True, "PDF stored in GridFS successfully.", str(pdf_id)
 
     def my_pdf(self, pdf_id):
         try:
@@ -77,3 +77,8 @@ class Database:
         if not user or 'pdfs' not in user:
             return []
         return user['pdfs']
+
+    def save_pdf_analysis(self, pdf_id, analysis_results):
+        """Store the analysis results for a PDF."""
+        self.db.pdf_analysis.insert_one({'pdf_id': pdf_id, 'analysis': analysis_results})
+        return True
