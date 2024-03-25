@@ -72,13 +72,30 @@ class Database:
         except Exception as e:
             return None, "PDF not found or invalid PDF ID"
 
+    # def get_pdfs_for_user(self, username):
+    #     user = self.users.find_one({'username': username})
+    #     if not user or 'pdfs' not in user:
+    #         return []
+    #     return user['pdfs']
     def get_pdfs_for_user(self, username):
         user = self.users.find_one({'username': username})
         if not user or 'pdfs' not in user:
             return []
-        return user['pdfs']
+        
+        pdfs_with_analysis = []
+        for pdf_entry in user['pdfs']:
+            pdf_id = pdf_entry['pdf_id']
+            analysis_result = self.get_pdf_analysis(pdf_id)
+            pdf_entry['analysis'] = analysis_result
+            pdfs_with_analysis.append(pdf_entry)
+        
+        return pdfs_with_analysis
 
     def save_pdf_analysis(self, pdf_id, analysis_results):
         """Store the analysis results for a PDF."""
         self.db.pdf_analysis.insert_one({'pdf_id': pdf_id, 'analysis': analysis_results})
         return True
+    
+    def get_pdf_analysis(self, pdf_id):
+        result = self.db.pdf_analysis.find_one({'pdf_id': pdf_id})
+        return result['analysis'] if result else {}

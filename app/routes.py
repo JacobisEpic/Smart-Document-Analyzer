@@ -2,21 +2,28 @@ from flask import render_template, request, jsonify, redirect, url_for, session,
 from werkzeug.utils import secure_filename
 from .database import Database
 import fitz  # PyMuPDF
-from collections import Counter
 import re
+from collections import Counter
+from nltk.corpus import stopwords
+import nltk
+from .database import Database
 
 # Functions
+nltk.download('stopwords')
+stop_words = set(stopwords.words('english'))
+
 def extract_text_from_pdf(pdf_data):
+    text = ""
     with fitz.open(stream=pdf_data, filetype="pdf") as doc:
-        text = ""
         for page in doc:
             text += page.get_text()
     return text
 
 def analyze_text(text):
     words = re.findall(r'\w+', text.lower())
-    word_counts = Counter(words)
-    return word_counts
+    filtered_words = [word for word in words if word not in stop_words and len(word) > 1]
+    word_counts = Counter(filtered_words)
+    return dict(word_counts)
 
 
 def configure_routes(app):
@@ -70,7 +77,6 @@ def configure_routes(app):
 
         if request.method == 'POST':
             file = request.files.get('file')
-            
             if not file or file.filename == '':
                 return jsonify({'success': False, 'message': 'A valid PDF file is required'}), 400
             if not file.filename.endswith('.pdf'):
@@ -82,16 +88,12 @@ def configure_routes(app):
             
             success, message, pdf_id = db.add_pdf_to_user(username, file_content, filename)
             if success:
-                # Extract text and perform analysis
                 text = extract_text_from_pdf(file_content)
                 analysis_results = analyze_text(text)
-                # Save analysis results to MongoDB
                 db.save_pdf_analysis(pdf_id, analysis_results)
             return jsonify({'success': success, 'message': message}), 200 if success else 400
-        else:
-            # Return the upload form for GET requests
-            return render_template('upload_pdf.html')
 
+        return render_template('upload_pdf.html')
     @app.route('/get_pdf/<pdf_id>')
     def get_pdf(pdf_id):
         if 'username' not in session:
@@ -117,3 +119,21 @@ def configure_routes(app):
             return jsonify({'success': False, 'message': 'No PDFs found for the user'}), 404
         
         return render_template('my_pdfs.html', pdfs=pdfs)
+    
+    
+    @app.route('/view_pdf/<pdf_id>')
+    def view_pdf(pdf_id):
+        if 'username' not in session:
+            return jsonify({'success': False, 'message': 'User not logged in'}), 401
+
+        # Assuming my_pdf method returns the PDF file stream and filename
+        pdf_file, filename = db.my_pdf(pdf_id)
+        if not pdf_file:
+            return jsonify({'success': False, 'message': 'PDF not found or invalid PDF ID'}), 404
+
+        # Fetch the NLP analysis data for the PDF
+        analysis_results = db.get_pdf_analysis(pdf_id)
+
+        # Instead of sending the file directly, render a template passing the PDF URL for iframe and analysis results
+        pdf_url = url_for('get_pdf', pdf_id=pdf_id)
+        return render_template('view_pdf.html', pdf_url=pdf_url, analysis_results=analysis_results, filename=filename)

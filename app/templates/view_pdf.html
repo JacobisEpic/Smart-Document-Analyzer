@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF and Analysis - {{ filename }}</title>
+    <style>
+        #pdf-viewer {
+            width: 100%; 
+            height: 500px; 
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>{{ filename }}</h2>
+    <iframe id="pdf-viewer" src="{{ pdf_url }}" frameborder="0"></iframe>
+    <div id="analysis-results">
+        <h3>NLP Analysis (Word Frequencies)</h3>
+        <ul>
+            {% for word, count in analysis_results.items() %}
+            <li>{{ word }}: {{ count }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
