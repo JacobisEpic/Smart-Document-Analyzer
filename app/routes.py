@@ -7,6 +7,7 @@ from collections import Counter
 from nltk.corpus import stopwords
 import nltk
 from .database import Database
+from .database import task_processor
 
 # Functions
 nltk.download('stopwords')
@@ -88,9 +89,12 @@ def configure_routes(app):
             
             success, message, pdf_id = db.add_pdf_to_user(username, file_content, filename)
             if success:
-                text = extract_text_from_pdf(file_content)
-                analysis_results = analyze_text(text)
-                db.save_pdf_analysis(pdf_id, analysis_results)
+                def process_pdf_task(file_content, pdf_id):
+                    text = extract_text_from_pdf(file_content)
+                    analysis_results = analyze_text(text)
+                    db.save_pdf_analysis(pdf_id, analysis_results)
+
+                task_processor.add_task(process_pdf_task, file_content, pdf_id)
             return jsonify({'success': success, 'message': message}), 200 if success else 400
 
         return render_template('upload_pdf.html')
@@ -120,7 +124,7 @@ def configure_routes(app):
         
         return render_template('my_pdfs.html', pdfs=pdfs)
     
-    
+
     @app.route('/view_pdf/<pdf_id>')
     def view_pdf(pdf_id):
         if 'username' not in session:

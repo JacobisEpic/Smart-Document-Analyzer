@@ -2,6 +2,10 @@ from pymongo import MongoClient
 import hashlib
 from gridfs import GridFS
 from bson.objectid import ObjectId
+from threading import Thread
+import queue
+import time
+
 
 
 class Database:
@@ -99,3 +103,28 @@ class Database:
     def get_pdf_analysis(self, pdf_id):
         result = self.db.pdf_analysis.find_one({'pdf_id': pdf_id})
         return result['analysis'] if result else {}
+
+
+# Queueing
+class BackgroundTaskProcessor:
+    def __init__(self, db):
+        self.db = db
+        self.task_queue = queue.Queue()
+        self.thread = Thread(target=self.run, daemon=True)
+        self.thread.start()
+
+    def add_task(self, task, *args):
+        self.task_queue.put((task, args))
+
+    def run(self):
+        while True:
+            task, args = self.task_queue.get()
+            try:
+                task(*args)
+            except Exception as e:
+                print(f"Error processing task: {e}")
+            finally:
+                self.task_queue.task_done()
+
+# Initialize the background task processor
+task_processor = BackgroundTaskProcessor(Database())
