@@ -37,4 +37,5 @@ To get started with Smart Document Analyzer, follow the instructions below:
 1. Clone the repository:
 ```bash
 git clone https://github.com/JacobisEpic/Smart-Document-Analyzer.git
-cd Smart-Document-Analyzer
+cd Smart-Document-Analyzer 
+
