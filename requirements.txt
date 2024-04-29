@@ -1,5 +1,4 @@
 flask
 pymongo
 PyMuPDF
-n1tk
 Werkzeug
