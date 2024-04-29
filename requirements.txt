@@ -3,3 +3,4 @@ pymongo
 PyMuPDF
 Werkzeug
 nltk==3.7
+mongomock
