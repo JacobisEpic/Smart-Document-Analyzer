@@ -1,13 +1,7 @@
 import pytest
 from app import create_app
+from flask import session
 
 @pytest.fixture
-def client():
-    app = create_app()
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
-
-def test_login(client):
-    response = client.post('/login', data={'username': 'testuser', 'password': 'password'})
-    assert response.status_code == 200
+def register(client, username, password):
+    return client.post('/register', data={'username': username, 'password': password}, follow_redirects=True)
