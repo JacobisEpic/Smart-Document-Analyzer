@@ -1,7 +1,15 @@
 import pytest
-from app import create_app
-from flask import session
+from app import app as flask_app
 
 @pytest.fixture
-def register(client, username, password):
-    return client.post('/register', data={'username': username, 'password': password}, follow_redirects=True)
+def app():
+    yield flask_app
+
+@pytest.fixture
+def client(app):
+    return app.test_client()
+
+def test_home_page(client):
+    response = client.get('/')
+    assert response.status_code == 200
+    assert response.data == b"Hello, World!"
