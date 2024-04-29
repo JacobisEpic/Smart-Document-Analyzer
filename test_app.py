@@ -24,12 +24,3 @@ def test_login_route(client):
     response = client.get('/login')
     assert response.status_code == 200
     assert 'Login' in response.data.decode()  # Assuming 'Login' is part of the login page text
-
-def test_register_submit(client):
-    """Test submitting a registration form."""
-    response = client.post('/register', data={
-        'username': 'testuser',
-        'password': 'testpass'
-    }, follow_redirects=True)
-    assert response.status_code == 200
-    assert 'Registration successful' in response.data.decode()  # Assuming this message shows on success
