@@ -13,3 +13,8 @@ def test_home_route(client):
     response = client.get('/')
     assert response.status_code == 200
     assert 'Welcome' in response.data.decode()  # Assuming 'Welcome' is part of the home page text
+
+def test_register_route(client):
+    """Test that the register page loads correctly."""
+    response = client.get('/register')
+    assert response.status_code == 200
