@@ -75,69 +75,49 @@ def configure_routes(app):
     def upload_pdf():
         if 'username' not in session:
             return jsonify({'success': False, 'message': 'User not logged in'}), 401
-
         if request.method == 'POST':
             file = request.files.get('file')
             if not file or file.filename == '':
                 return jsonify({'success': False, 'message': 'A valid PDF file is required'}), 400
             if not file.filename.endswith('.pdf'):
                 return jsonify({'success': False, 'message': 'Invalid file type'}), 400
-            
             filename = secure_filename(file.filename)
             file_content = file.read()
             username = session['username']
-            
             success, message, pdf_id = db.add_pdf_to_user(username, file_content, filename)
-            if success:
-                def process_pdf_task(file_content, pdf_id):
-                    text = extract_text_from_pdf(file_content)
-                    analysis_results = analyze_text(text)
-                    db.save_pdf_analysis(pdf_id, analysis_results)
-
-                task_processor.add_task(process_pdf_task, file_content, pdf_id)
             return jsonify({'success': success, 'message': message}), 200 if success else 400
-
         return render_template('upload_pdf.html')
+    
     @app.route('/get_pdf/<pdf_id>')
     def get_pdf(pdf_id):
         if 'username' not in session:
             return jsonify({'success': False, 'message': 'User not logged in'}), 401
-
-        pdf_file = db.my_pdf(pdf_id)
+        pdf_file = db.get_pdf(pdf_id)
         if pdf_file:
-            # Note the corrected argument here is `filename=`, not `attachment_filename=`
-            return send_file(pdf_file,
-                            as_attachment=False,  # Serve inline
-                            mimetype='application/pdf')  # Explicitly set the MIME type
+            return send_file(pdf_file, as_attachment=False, mimetype='application/pdf')
         else:
             return jsonify({'success': False, 'message': 'PDF not found or invalid PDF ID'}), 404
-
+   
     @app.route('/my_pdfs')
     def my_pdfs():
         if 'username' not in session:
             return jsonify({'success': False, 'message': 'User not logged in'}), 401
-
+        
         username = session['username']
         pdfs = db.get_pdfs_for_user(username)
         if not pdfs:
             return jsonify({'success': False, 'message': 'No PDFs found for the user'}), 404
         
         return render_template('my_pdfs.html', pdfs=pdfs)
-    
 
     @app.route('/view_pdf/<pdf_id>')
     def view_pdf(pdf_id):
         if 'username' not in session:
             return jsonify({'success': False, 'message': 'User not logged in'}), 401
 
-        # Assuming my_pdf method returns the PDF file stream and filename
-        pdf_file, filename = db.my_pdf(pdf_id)
+        pdf_file = db.get_pdf(pdf_id)
         if not pdf_file:
             return jsonify({'success': False, 'message': 'PDF not found or invalid PDF ID'}), 404
 
-        # Fetch the NLP analysis data for the PDF
-        analysis_results = db.get_pdf_analysis(pdf_id)
-
-        # Instead of sending the file directly, render a template passing the PDF URL for iframe and analysis results
         pdf_url = url_for('get_pdf', pdf_id=pdf_id)
-        return render_template('view_pdf.html', pdf_url=pdf_url, analysis_results=analysis_results, filename=filename)
+        return render_template('view_pdf.html', pdf_url=pdf_url, filename=pdf_file.filename)

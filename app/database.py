@@ -5,9 +5,9 @@ from bson.objectid import ObjectId
 from threading import Thread
 import queue
 import time
+import fitz 
 # import feedparser
 # from apscheduler.schedulers.background import BackgroundScheduler
-
 
 
 class Database:
@@ -17,7 +17,6 @@ class Database:
         self.users = self.db['users']
         self.fs = GridFS(self.db)
 
-    
     def hash_password(self, password):
         return hashlib.sha256(password.encode()).hexdigest()
 
@@ -31,7 +30,6 @@ class Database:
     def authenticate_user(self, username, password):
         user = self.users.find_one({'username': username})
         if user:
-            # Hash the provided password and compare with the stored one
             hashed_password = self.hash_password(password)
             if hashed_password == user['password']:
                 return True, "Authentication successful."
@@ -39,73 +37,56 @@ class Database:
                 return False, "Incorrect password."
         else:
             return False, "User not found."
-    # def add_pdf_to_user(self, username, pdf_path):
+
+    # def add_pdf_to_user(self, username, pdf_data, filename):
     #     user = self.users.find_one({'username': username})
     #     if not user:
     #         return False, "User not found."
-        
+    #     pdf_id = self.fs.put(pdf_data, filename=filename)
+    #     pdf_entry = {'pdf_id': pdf_id, 'filename': filename}
     #     if 'pdfs' not in user:
-    #         user['pdfs'] = []
-        
-    #     user['pdfs'].append(pdf_path)
+    #         user['pdfs'] = [pdf_entry]
+    #     else:
+    #         user['pdfs'].append(pdf_entry)
     #     self.users.update_one({'_id': user['_id']}, {'$set': {'pdfs': user['pdfs']}})
-    #     return True, "PDF added successfully."
-            
-
+    #     return True, "PDF stored in GridFS successfully.", str(pdf_id)
 
     def add_pdf_to_user(self, username, pdf_data, filename):
         user = self.users.find_one({'username': username})
         if not user:
             return False, "User not found."
         
-        # The content of the file is read and stored in GridFS.
         pdf_id = self.fs.put(pdf_data, filename=filename)
+        pdf_text = self.extract_text_from_pdf(pdf_data)  # Extract text from PDF
         
-        # The reference to the file in GridFS is stored in the user's record.
-        pdf_entry = {'pdf_id': pdf_id, 'filename': filename}
+        pdf_entry = {'pdf_id': pdf_id, 'filename': filename, 'text': pdf_text}
         if 'pdfs' not in user:
             user['pdfs'] = [pdf_entry]
         else:
             user['pdfs'].append(pdf_entry)
-        pdf_id = self.fs.put(pdf_data, filename=filename)
+        
         self.users.update_one({'_id': user['_id']}, {'$set': {'pdfs': user['pdfs']}})
         return True, "PDF stored in GridFS successfully.", str(pdf_id)
+    
+    def extract_text_from_pdf(self, pdf_data):
+        text = ""
+        with fitz.open(stream=pdf_data, filetype="pdf") as doc:
+            for page in doc:
+                text += page.get_text()
+        return text
 
-    def my_pdf(self, pdf_id):
+    def get_pdf(self, pdf_id):
         try:
             pdf_file = self.fs.get(ObjectId(pdf_id))
             return pdf_file
         except Exception as e:
             return None, "PDF not found or invalid PDF ID"
 
-    # def get_pdfs_for_user(self, username):
-    #     user = self.users.find_one({'username': username})
-    #     if not user or 'pdfs' not in user:
-    #         return []
-    #     return user['pdfs']
     def get_pdfs_for_user(self, username):
         user = self.users.find_one({'username': username})
         if not user or 'pdfs' not in user:
             return []
-        
-        pdfs_with_analysis = []
-        for pdf_entry in user['pdfs']:
-            pdf_id = pdf_entry['pdf_id']
-            analysis_result = self.get_pdf_analysis(pdf_id)
-            pdf_entry['analysis'] = analysis_result
-            pdfs_with_analysis.append(pdf_entry)
-        
-        return pdfs_with_analysis
-
-    def save_pdf_analysis(self, pdf_id, analysis_results):
-        """Store the analysis results for a PDF."""
-        self.db.pdf_analysis.insert_one({'pdf_id': pdf_id, 'analysis': analysis_results})
-        return True
-    
-    def get_pdf_analysis(self, pdf_id):
-        result = self.db.pdf_analysis.find_one({'pdf_id': pdf_id})
-        return result['analysis'] if result else {}
-
+        return user['pdfs']
 
 # Queueing
 class BackgroundTaskProcessor:
