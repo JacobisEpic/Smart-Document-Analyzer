@@ -6,6 +6,10 @@ from threading import Thread
 import queue
 import time
 import fitz 
+from .DataProtection import sanitize_input, validate_username, validate_password
+
+# Use these functions as needed in your database operations
+
 # import feedparser
 # from apscheduler.schedulers.background import BackgroundScheduler
 

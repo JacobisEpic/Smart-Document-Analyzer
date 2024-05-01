@@ -8,6 +8,7 @@ from nltk.corpus import stopwords
 import nltk
 from .database import Database
 from .database import task_processor
+from .DataProtection import sanitize_input, validate_username, validate_password
 
 # Functions
 nltk.download('stopwords')
@@ -40,15 +41,25 @@ def configure_routes(app):
             username = request.form.get('username')
             password = request.form.get('password')
             
-            if not username or not password:
-                return jsonify({'success': False, 'message': 'Missing username or password'}), 400
+            # Sanitize inputs
+            username = sanitize_input(username)
+            password = sanitize_input(password)
             
+            # Validate inputs
+            valid_username, user_message = validate_username(username)
+            valid_password, pass_message = validate_password(password)
+            if not valid_username or not valid_password:
+                return jsonify({'success': False, 'message': user_message if not valid_username else pass_message}), 400
+            
+            # Proceed with registration if validation is successful
             success, message = db.insert_user_login(username, password)
             if success:
                 return redirect(url_for('register_success'))
             else:
                 return jsonify({'success': success, 'message': message}), 400
+        
         return render_template('register.html')
+
 
     @app.route('/register_success')
     def register_success():
