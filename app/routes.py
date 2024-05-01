@@ -10,6 +10,7 @@ from .database import Database
 from .database import task_processor
 from .DataProtection import sanitize_input, validate_username, validate_password
 
+
 # Functions
 nltk.download('stopwords')
 stop_words = set(stopwords.words('english'))

@@ -4,46 +4,24 @@
     <meta charset="UTF-8">
     <title>My PDFs</title>
     <style>
-        #pdf-viewer {
-            width: 100%; 
-            height: 600px; 
-            border: 1px solid #ccc;
-        }
-        iframe {
-            width: 100%; 
-            height: 100%;
-        }
-        .text-content {
-            margin-top: 20px;
-            padding: 10px;
-            border-top: 1px solid #ccc;
-            white-space: pre-wrap; /* Maintains whitespace formatting */
-            overflow-y: auto; /* Adds vertical scrollbar if needed */
-            max-height: 200px; /* Sets maximum height before scrolling */
-        }
+        #pdf-viewer { width: 100%; height: 600px; border: 1px solid #ccc; }
+        iframe { width: 100%; height: 100%; }
+        .pdf-entry { margin-top: 20px; padding: 10px; border-top: 1px solid #ccc; }
+        .pdf-summary { white-space: pre-wrap; overflow-y: auto; max-height: 200px; }
     </style>
 </head>
 <body>
     <h2>My Uploaded PDFs</h2>
     <ul>
         {% for pdf in pdfs %}
-            <li>
+            <li class="pdf-entry">
                 <a href="{{ url_for('get_pdf', pdf_id=pdf['pdf_id']) }}" target="_blank">{{ pdf['filename'] }}</a>
-                <div class="text-content">
-                    <h4>Extracted Text:</h4>
-                    <p>{{ pdf['text'] }}</p>
+                <div class="pdf-summary">
+                    <h4>PDF Summary:</h4>
+                    <p>{{ pdf['summary'] }}</p>
                 </div>
             </li>
         {% endfor %}
     </ul>
-    <div id="pdf-viewer">
-        <iframe id="pdf-frame" src="" frameborder="0"></iframe>
-    </div>
-
-    <script>
-        function viewPdf(url) {
-            document.getElementById('pdf-frame').src = url;
-        }
-    </script>
 </body>
 </html>
