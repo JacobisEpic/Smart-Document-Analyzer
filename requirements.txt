@@ -2,6 +2,7 @@ flask
 pymongo
 PyMuPDF
 Werkzeug
+requests
 nltk==3.7
 mongomock==3.23.0
 setuptools==65.3.0
