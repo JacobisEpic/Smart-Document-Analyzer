@@ -26,7 +26,6 @@ The Password is hashed in the database
 
 ## Secure File Uploader/Ingester
 ![Screenshot 2024-05-04 at 12 17 10 AM](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/01f04262-ff24-43cc-9db0-7a5f381dbd39)
-Here is the upload page
 
 ## Feed Ingester & Output Generator & Text NLP Analysis
 ![Screenshot 2024-05-04 at 12 27 35 AM](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/b8b18085-8123-40ba-88bc-b20b7e253d44)
