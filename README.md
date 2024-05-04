@@ -2,6 +2,14 @@
 
 Smart Document Analyzer is a powerful Flask and MongoDB-based web application designed to intelligently analyze and process documents. It leverages natural language processing techniques to extract, analyze, and present key insights from uploaded PDF documents, making it an invaluable tool for data analysis, research, and academic studies.
 
+## Demo
+
+
+
+https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/8b7d659b-0434-4d90-bc65-1f4acfffc28f
+
+
+
 ## Application Screenshots
 
 Below are various screenshots depicting the functionality and user interface of the Smart Document Analyzer:
