@@ -9,10 +9,6 @@ import fitz
 from .DataProtection import sanitize_input, validate_username, validate_password
 import requests
 import os
-# Use these functions as needed in your database operations
-
-# import feedparser
-# from apscheduler.schedulers.background import BackgroundScheduler
 
 chatGPTAPI = 'APIKEY'
 GoogleAPI = 'APIKEY'
