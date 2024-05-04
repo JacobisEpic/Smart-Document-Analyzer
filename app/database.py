@@ -14,6 +14,11 @@ import os
 # import feedparser
 # from apscheduler.schedulers.background import BackgroundScheduler
 
+chatGPTAPI = 'chatGPTAPI'
+GoogleAPI = 'GoogleAPI'
+Googlecx = 'Googlecx'
+
+
 
 class Database:
     def __init__(self):
@@ -64,10 +69,17 @@ class Database:
         pdf_id = self.fs.put(pdf_data, filename=filename)
         pdf_text = self.extract_text_from_pdf(pdf_data)
         
-        # Only pass the text to the function
-        summary = self.summarize_text_with_chatgpt(pdf_text)
+        # Extract keywords for search
+        keywords = self.extract_keywords(pdf_text)  # Implement this method based on your needs
+        search_results = self.search_web_for_keywords(keywords)
         
-        pdf_entry = {'pdf_id': pdf_id, 'filename': filename, 'text': pdf_text, 'summary': summary}
+        pdf_entry = {
+            'pdf_id': pdf_id,
+            'filename': filename,
+            'text': pdf_text,
+            'summary': self.summarize_text_with_chatgpt(pdf_text),
+            'search_results': search_results  # Store search results for access in the frontend
+        }
         if 'pdfs' not in user:
             user['pdfs'] = [pdf_entry]
         else:
@@ -76,11 +88,12 @@ class Database:
         self.users.update_one({'_id': user['_id']}, {'$set': {'pdfs': user['pdfs']}})
         return True, "PDF stored in GridFS successfully.", str(pdf_id)
 
+
 # This allow the use to receive text NLP Analysis
     def summarize_text_with_chatgpt(self, text):
         """Uses ChatGPT to generate a summary for the provided text."""
         # Load the API key from an environment variable
-        api_key = 'KEY'
+        api_key = chatGPTAPI
         if not api_key:
             raise ValueError("API key is not configured properly.")
 
@@ -108,6 +121,37 @@ class Database:
             # Provide detailed information if the request fails
             return f"Failed to generate summary, status code {response.status_code}, response: {response.text}"
 
+    def extract_keywords(self, text):
+        """Uses ChatGPT to generate a summary for the provided text."""
+        # Load the API key from an environment variable
+        api_key = chatGPTAPI
+        if not api_key:
+            raise ValueError("API key is not configured properly.")
+
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json',
+        }
+        data = {
+            'model': 'gpt-3.5-turbo',  # Check if this model suits your needs
+            'messages': [
+                {'role': 'system', 'content': 'Give me 4-5 Key words from this text so that I can google those key words to find out more information related to the text:'},
+                {'role': 'user', 'content': text}
+            ],
+            'max_tokens': 150
+        }
+        response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, json=data)
+        if response.status_code == 200:
+            try:
+                # Extracting the summary from the response JSON.
+                print(response.json()['choices'][0]['message']['content'].strip())
+                return response.json()['choices'][0]['message']['content'].strip()
+            except KeyError:
+                # Handle possible KeyError if the response structure isn't as expected
+                return "Error in extracting summary from the response."
+        else:
+            # Provide detailed information if the request fails
+            return f"Failed to generate summary, status code {response.status_code}, response: {response.text}"
 
     def extract_text_from_pdf(self, pdf_data):
         text = ""
@@ -128,6 +172,20 @@ class Database:
         if not user or 'pdfs' not in user:
             return []
         return user['pdfs']
+
+    def search_web_for_keywords(self, keywords):
+        url = "https://www.googleapis.com/customsearch/v1"
+        params = {
+            'key': GoogleAPI,
+            'cx': Googlecx,
+            'q': ' '.join(keywords)
+        }
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            print(response.json()['items'])
+            return response.json()['items']
+        else:
+            return []
 
 # Queueing
 class BackgroundTaskProcessor:

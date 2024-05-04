@@ -20,6 +20,14 @@
                     <h4>PDF Summary:</h4>
                     <p>{{ pdf['summary'] }}</p>
                 </div>
+                <div>
+                    <h4>Related Links:</h4>
+                    <ul>
+                        {% for result in pdf['search_results'] %}
+                        <li><a href="{{ result['link'] }}" target="_blank">{{ result['title'] }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </li>
         {% endfor %}
     </ul>
