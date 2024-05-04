@@ -14,9 +14,9 @@ import os
 # import feedparser
 # from apscheduler.schedulers.background import BackgroundScheduler
 
-chatGPTAPI = 'chatGPTAPI'
-GoogleAPI = 'GoogleAPI'
-Googlecx = 'Googlecx'
+chatGPTAPI = 'APIKEYHERE'
+GoogleAPI = 'APIKEYHERE'
+Googlecx = 'APIKEYHERE'
 
 
 
@@ -135,7 +135,7 @@ class Database:
         data = {
             'model': 'gpt-3.5-turbo',  # Check if this model suits your needs
             'messages': [
-                {'role': 'system', 'content': 'Give me 4-5 Key words from this text so that I can google those key words to find out more information related to the text:'},
+                {'role': 'system', 'content': 'Give me 1-2 Key words from this text so that I can google those key words to find out more information related to the text:'},
                 {'role': 'user', 'content': text}
             ],
             'max_tokens': 150
@@ -178,14 +178,29 @@ class Database:
         params = {
             'key': GoogleAPI,
             'cx': Googlecx,
-            'q': ' '.join(keywords)
+            'q': ' '.join(keywords)  # Ensure keywords are a list of words
         }
         response = requests.get(url, params=params)
+        # print(response.json())
         if response.status_code == 200:
-            print(response.json()['items'])
-            return response.json()['items']
+            response_data = response.json()
+            items = response.json()['items']
+            print(items)
+            # Extract useful information from each item
+            formatted_results = []
+            for item in items:
+                formatted_result = {
+                    'title': item.get('title'),
+                    'link': item.get('link'),
+                    'snippet': item.get('snippet')
+                }
+                formatted_results.append(formatted_result)
+            print(formatted_results)
+            return formatted_results
         else:
+            print(f"Failed to fetch search results, status code {response.status_code}, response: {response.text}")
             return []
+
 
 # Queueing
 class BackgroundTaskProcessor:

@@ -36,8 +36,11 @@ def configure_routes(app):
     def home():
         return render_template('home.html')
 
+
+
     @app.route('/register', methods=['GET', 'POST'])
     def register():
+        error_message = None  # Initialize no error
         if request.method == 'POST':
             username = request.form.get('username')
             password = request.form.get('password')
@@ -50,16 +53,20 @@ def configure_routes(app):
             valid_username, user_message = validate_username(username)
             valid_password, pass_message = validate_password(password)
             if not valid_username or not valid_password:
-                return jsonify({'success': False, 'message': user_message if not valid_username else pass_message}), 400
+                error_message = user_message if not valid_username else pass_message
+                if not valid_username and not valid_password:
+                    error_message = f"{user_message} \n\n {pass_message}"
+                return render_template('register.html', error_message=error_message)
             
             # Proceed with registration if validation is successful
             success, message = db.insert_user_login(username, password)
             if success:
                 return redirect(url_for('register_success'))
             else:
-                return jsonify({'success': success, 'message': message}), 400
-        
-        return render_template('register.html')
+                error_message = message
+            
+        return render_template('register.html', error_message=error_message)
+
 
 
     @app.route('/register_success')

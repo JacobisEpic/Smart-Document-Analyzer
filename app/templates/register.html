@@ -3,14 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
+    <style>
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="text"], input[type="password"], input[type="submit"] {
+            margin-top: 5px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <h2>Register</h2>
+    {% if error_message %}
+    <div class="error">{{ error_message }}</div>
+    {% endif %}
     <form action="/register" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
+        <label for="username">Username:
+            <input type="text" id="username" name="username" required>
+            <span class="requirements">Must be 3-20 characters long, alphanumeric or underscores only.</span>
+        </label>
+        <label for="password">Password:
+            <input type="password" id="password" name="password" required>
+            <span class="requirements">Must be at least 6 characters long and include both letters and numbers.</span>
+        </label>
         <input type="submit" value="Register">
     </form>
 </body>
