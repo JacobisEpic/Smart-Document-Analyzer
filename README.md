@@ -13,7 +13,7 @@ https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/8b7d659b
 ## Application Screenshots
 
 Below are various screenshots depicting the functionality and user interface of the Smart Document Analyzer:
-
+![Screenshot 2024-05-04 at 12 14 25 AM](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/438d403e-1ef6-4186-a54c-4989922076c6)
 ![Screenshot 1](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/d2595fec-474d-42c9-8a4a-1684ce4a9425)
 ![Screenshot 2](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/5e284748-3e80-4171-83a2-4e2154912171)
 ![Screenshot 3](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/a8a0769a-effa-4d7e-9c69-25e601ab6298)
