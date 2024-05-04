@@ -14,14 +14,17 @@ https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/8b7d659b
 
 Below are various screenshots depicting the functionality and user interface of the Smart Document Analyzer:
 ![Screenshot 2024-05-04 at 12 14 25 AM](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/438d403e-1ef6-4186-a54c-4989922076c6)
-![Screenshot 2](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/5e284748-3e80-4171-83a2-4e2154912171)
-![Screenshot 3](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/a8a0769a-effa-4d7e-9c69-25e601ab6298)
-![Screenshot 4](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/ddf61137-dcc2-478f-9b1c-bbc4172c063f)
-![Screenshot 5](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/9e88484f-f405-4671-895b-af650648bdc1)
-![Screenshot 6](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/0b92999c-c16a-4e0d-a55b-dbcfabbcd103)
-![Screenshot 7](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/ebbdca25-a428-4137-8715-14c24269af27)
-![Screenshot 8](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/8d693019-1db7-4532-bf70-4813dc674032)
-![Screenshot 9](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/5326f9d9-dddb-4ed3-bbd2-42fdb9bdd7eb)
+Here is the home screen
+
+## Authorization and Authentication
+![Screenshot 2024-05-04 at 12 15 59 AM](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/3315de1a-0122-4647-80e8-b3f1624e003b)
+The Password is hashed in the database
+
+## Secure File Uploader/Ingester
+![Screenshot 2024-05-04 at 12 17 10 AM](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/01f04262-ff24-43cc-9db0-7a5f381dbd39)
+Here is the upload page
+
+## Feed Ingester & Output Generator 
 
 ## Docker Setup
 
