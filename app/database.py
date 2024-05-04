@@ -14,9 +14,9 @@ import os
 # import feedparser
 # from apscheduler.schedulers.background import BackgroundScheduler
 
-chatGPTAPI = 'APIKEYHERE'
-GoogleAPI = 'APIKEYHERE'
-Googlecx = 'APIKEYHERE'
+chatGPTAPI = 'APIKEY'
+GoogleAPI = 'APIKEY'
+Googlecx = 'APIKEY'
 
 
 
@@ -47,19 +47,6 @@ class Database:
                 return False, "Incorrect password."
         else:
             return False, "User not found."
-
-    # def add_pdf_to_user(self, username, pdf_data, filename):
-    #     user = self.users.find_one({'username': username})
-    #     if not user:
-    #         return False, "User not found."
-    #     pdf_id = self.fs.put(pdf_data, filename=filename)
-    #     pdf_entry = {'pdf_id': pdf_id, 'filename': filename}
-    #     if 'pdfs' not in user:
-    #         user['pdfs'] = [pdf_entry]
-    #     else:
-    #         user['pdfs'].append(pdf_entry)
-    #     self.users.update_one({'_id': user['_id']}, {'$set': {'pdfs': user['pdfs']}})
-    #     return True, "PDF stored in GridFS successfully.", str(pdf_id)
 
     def add_pdf_to_user(self, username, pdf_data, filename):
         user = self.users.find_one({'username': username})
@@ -104,7 +91,7 @@ class Database:
         data = {
             'model': 'gpt-3.5-turbo',  # Check if this model suits your needs
             'messages': [
-                {'role': 'system', 'content': 'Summarize this text:'},
+                {'role': 'system', 'content': 'Summarize this text and give text NLP analysis. Give a newline between NLP Analysis (text sentiment) and summary:'},
                 {'role': 'user', 'content': text}
             ],
             'max_tokens': 150
