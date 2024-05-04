@@ -3,13 +3,8 @@ import re
 from html import escape
 
 def sanitize_input(data):
-
-    # HTML escape to prevent XSS attacks
     data = escape(data)
-    
-    # Strip out unwanted scripts or SQL injections patterns
     data = re.sub(r'[^\w.@+-]', '', data)
-    
     return data
 
 def validate_username(username):
