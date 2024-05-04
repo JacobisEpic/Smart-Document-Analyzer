@@ -2,11 +2,15 @@
 
 Smart Document Analyzer is a powerful Flask and MongoDB-based web application designed to intelligently analyze and process documents. It leverages natural language processing techniques to extract, analyze, and present key insights from uploaded PDF documents, making it an invaluable tool for data analysis, research, and academic studies.
 
-## Demo
+## Video Demo
 
 
 
-https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/8b7d659b-0434-4d90-bc65-1f4acfffc28f
+
+
+https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/05468c43-3fde-4dc1-b795-a5af4dbc33e5
+
+
 
 
 
@@ -24,7 +28,9 @@ The Password is hashed in the database
 ![Screenshot 2024-05-04 at 12 17 10 AM](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/01f04262-ff24-43cc-9db0-7a5f381dbd39)
 Here is the upload page
 
-## Feed Ingester & Output Generator 
+## Feed Ingester & Output Generator & Text NLP Analysis
+![Screenshot 2024-05-04 at 12 27 35 AM](https://github.com/JacobisEpic/Smart-Document-Analyzer/assets/108195485/b8b18085-8123-40ba-88bc-b20b7e253d44)
+
 
 ## Docker Setup
 
@@ -52,4 +58,6 @@ cd Smart-Document-Analyzer
 2. Run MongoDB Database
 brew services start mongodb-community
 note: mongosh or mongod does not work :(
+
+3. python3 run.py
 
